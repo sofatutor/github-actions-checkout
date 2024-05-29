@@ -169,8 +169,9 @@ describe('git-auth-helper tests', () => {
 
     // Mock fs.promises.readFile
     const realReadFile = fs.promises.readFile
-    jest.spyOn(fs.promises, 'readFile').mockImplementation(
-      async (file: any, options: any): Promise<Buffer> => {
+    jest
+      .spyOn(fs.promises, 'readFile')
+      .mockImplementation(async (file: any, options: any): Promise<Buffer> => {
         const userKnownHostsPath = path.join(
           os.homedir(),
           '.ssh',
@@ -181,8 +182,7 @@ describe('git-auth-helper tests', () => {
         }
 
         return await realReadFile(file, options)
-      }
-    )
+      })
 
     // Act
     const authHelper = gitAuthHelper.createAuthHelper(git, settings)
@@ -727,6 +727,9 @@ async function setup(testName: string): Promise<void> {
     branchDelete: jest.fn(),
     branchExists: jest.fn(),
     branchList: jest.fn(),
+    disableSparseCheckout: jest.fn(),
+    sparseCheckout: jest.fn(),
+    sparseCheckoutNonConeMode: jest.fn(),
     checkout: jest.fn(),
     checkoutDetach: jest.fn(),
     config: jest.fn(
@@ -793,14 +796,20 @@ async function setup(testName: string): Promise<void> {
     ),
     tryDisableAutomaticGarbageCollection: jest.fn(),
     tryGetFetchUrl: jest.fn(),
-    tryReset: jest.fn()
+    tryReset: jest.fn(),
+    version: jest.fn()
   }
 
   settings = {
     authToken: 'some auth token',
     clean: true,
     commit: '',
+    filter: undefined,
+    sparseCheckout: [],
+    sparseCheckoutConeMode: true,
     fetchDepth: 1,
+    fetchTags: false,
+    showProgress: true,
     lfs: false,
     submodules: false,
     nestedSubmodules: false,
@@ -812,6 +821,7 @@ async function setup(testName: string): Promise<void> {
     sshKey: sshPath ? 'some ssh private key' : '',
     sshKnownHosts: '',
     sshStrict: true,
+    sshUser: '',
     workflowOrganizationId: 123456,
     setSafeDirectory: true,
     githubServerUrl: githubServerUrl
